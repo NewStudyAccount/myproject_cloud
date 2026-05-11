@@ -1,0 +1,60 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: ''
+        group: DEFAULT_GROUP
+      config:
+        server-addr: 127.0.0.1:8848
+        namespace: ''
+        group: DEFAULT_GROUP
+        file-extension: yml
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: cloud-auth
+          uri: lb://cloud-auth
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-system
+          uri: lb://cloud-system
+          predicates:
+            - Path=/system/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-generator
+          uri: lb://cloud-generator
+          predicates:
+            - Path=/generator/**
+          filters:
+            - StripPrefix=1
+        - id: cloud-file
+          uri: lb://cloud-file
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix=1
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: redis123
+      database: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.33
+    container_name: project-cloud-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: project_cloud
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+
+  redis:
+    image: redis:7.2
+    container_name: project-cloud-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass redis123 --appendonly yes
+    volumes:
+      - ./redis/data:/data
+    restart: always
+
+  nacos:
+    image: nacos/nacos-server:v2.4.3
+    container_name: project-cloud-nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: ""
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+    restart: always
+
+  minio:
+    image: minio/minio:latest
+    container_name: project-cloud-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./minio/data:/data
+    restart: always
