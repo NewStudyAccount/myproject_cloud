@@ -1,0 +1,19 @@
+package ${packageName}.${moduleName}.domain.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.project.cloud.common.mybatis.base.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * ${tableComment}
+ *
+ * @author ${author}
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("${config.tableName}")
+public class ${entityName} extends BaseEntity {
+
+    // TODO: 添加字段
+}

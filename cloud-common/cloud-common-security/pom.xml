@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.project</groupId>
+        <groupId>com.project.cloud</groupId>
         <artifactId>cloud-common</artifactId>
         <version>1.0.0</version>
     </parent>
 
     <artifactId>cloud-common-security</artifactId>
-
     <name>cloud-common-security</name>
     <description>安全模块</description>
 
     <dependencies>
-        <!-- 核心模块 -->
+        <!-- Common Core -->
         <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-core</artifactId>
         </dependency>
 
-        <!-- Redis 模块 -->
+        <!-- Common Redis -->
         <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-redis</artifactId>
         </dependency>
 
@@ -40,17 +39,18 @@
             <artifactId>spring-security-oauth2-authorization-server</artifactId>
         </dependency>
 
-        <!-- Nimbus JOSE JWT -->
+        <!-- JJWT -->
         <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>nimbus-jose-jwt</artifactId>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
         </dependency>
-
-        <!-- Servlet API -->
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
         </dependency>
     </dependencies>
 </project>

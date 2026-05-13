@@ -1,5 +1,6 @@
 package com.project.cloud.system.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.project.cloud.common.core.result.PageResult;
 import com.project.cloud.common.core.result.Result;
 import com.project.cloud.common.log.annotation.OperLog;
@@ -19,9 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * 用户管理控制器
- */
 @Tag(name = "用户管理")
 @RestController
 @RequestMapping("/user")
@@ -30,30 +28,31 @@ public class SysUserController {
 
     private final ISysUserService userService;
 
-    @PostMapping("/detail")
-    @Operation(summary = "查询用户详情")
-    public Result<SysUserVO> detail(@RequestBody SysUserQuery query) {
-        return Result.success(userService.detail(query));
+    @PostMapping("/list")
+    @Operation(summary = "用户列表")
+    public Result<PageResult<SysUserVO>> list(@RequestBody SysUserQuery query) {
+        Page<SysUserVO> page = userService.page(query);
+        return Result.success(new PageResult<>(page.getTotal(), page.getRecords()));
     }
 
-    @PostMapping("/list")
-    @Operation(summary = "查询用户列表")
-    public Result<PageResult<SysUserVO>> list(@RequestBody SysUserQuery query) {
-        return Result.success(userService.list(query));
+    @PostMapping("/detail")
+    @Operation(summary = "用户详情")
+    public Result<SysUserVO> detail(@RequestBody SysUserQuery query) {
+        return Result.success(userService.detail(query.getId()));
     }
 
     @PostMapping("/add")
     @Operation(summary = "新增用户")
     @OperLog(title = "用户管理", businessType = BusinessType.INSERT)
-    public Result<Void> add(@RequestBody @Valid SysUserDTO dto) {
+    public Result<Void> add(@Valid @RequestBody SysUserDTO dto) {
         userService.add(dto);
         return Result.success();
     }
 
     @PostMapping("/update")
-    @Operation(summary = "更新用户")
+    @Operation(summary = "修改用户")
     @OperLog(title = "用户管理", businessType = BusinessType.UPDATE)
-    public Result<Void> update(@RequestBody @Valid SysUserDTO dto) {
+    public Result<Void> update(@Valid @RequestBody SysUserDTO dto) {
         userService.update(dto);
         return Result.success();
     }
@@ -62,7 +61,7 @@ public class SysUserController {
     @Operation(summary = "删除用户")
     @OperLog(title = "用户管理", businessType = BusinessType.DELETE)
     public Result<Void> delete(@RequestBody List<Long> ids) {
-        userService.delete(ids);
+        userService.deleteByIds(ids);
         return Result.success();
     }
 }

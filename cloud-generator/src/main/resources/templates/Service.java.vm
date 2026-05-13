@@ -1,0 +1,28 @@
+package ${packageName}.${moduleName}.service;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.project.cloud.common.mybatis.base.BaseService;
+import ${packageName}.${moduleName}.domain.dto.${entityName}DTO;
+import ${packageName}.${moduleName}.domain.entity.${entityName};
+import ${packageName}.${moduleName}.domain.query.${entityName}Query;
+import ${packageName}.${moduleName}.domain.vo.${entityName}VO;
+
+import java.util.List;
+
+/**
+ * ${tableComment} Service
+ *
+ * @author ${author}
+ */
+public interface I${entityName}Service extends IService<${entityName}> {
+
+    Page<${entityName}VO> page(${entityName}Query query);
+
+    ${entityName}VO detail(Long id);
+
+    void add(${entityName}DTO dto);
+
+    void update(${entityName}DTO dto);
+
+    void deleteByIds(List<Long> ids);
+}

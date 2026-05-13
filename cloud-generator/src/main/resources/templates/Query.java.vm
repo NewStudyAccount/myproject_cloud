@@ -1,0 +1,17 @@
+package ${packageName}.${moduleName}.domain.query;
+
+import com.project.cloud.common.core.domain.model.BaseQuery;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * ${tableComment} 查询参数
+ *
+ * @author ${author}
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class ${entityName}Query extends BaseQuery {
+
+    // TODO: 添加查询字段
+}

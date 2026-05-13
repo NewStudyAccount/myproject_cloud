@@ -1,0 +1,9 @@
+cloud-common-core          ← 无内部依赖
+    ↓
+cloud-common-redis         ← core
+    ↓
+cloud-common-security      ← core, redis, jjwt
+    ↓
+cloud-common-mybatis       ← security (→ core, redis)
+cloud-common-log           ← security (→ core, redis), aop, web(optional)
+cloud-common-swagger       ← core

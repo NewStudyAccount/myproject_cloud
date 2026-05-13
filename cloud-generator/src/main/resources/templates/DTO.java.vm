@@ -1,0 +1,16 @@
+package ${packageName}.${moduleName}.domain.dto;
+
+import lombok.Data;
+import java.io.Serializable;
+
+/**
+ * ${tableComment} DTO
+ *
+ * @author ${author}
+ */
+@Data
+public class ${entityName}DTO implements Serializable {
+
+    private Long id;
+    // TODO: 添加字段
+}

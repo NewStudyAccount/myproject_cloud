@@ -1,0 +1,17 @@
+package ${packageName}.${moduleName}.domain.vo;
+
+import lombok.Data;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+/**
+ * ${tableComment} VO
+ *
+ * @author ${author}
+ */
+@Data
+public class ${entityName}VO implements Serializable {
+
+    private Long id;
+    // TODO: 添加字段
+}

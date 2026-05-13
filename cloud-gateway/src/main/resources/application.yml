@@ -5,21 +5,7 @@ spring:
   application:
     name: cloud-gateway
   cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        namespace: ''
-        group: DEFAULT_GROUP
-      config:
-        server-addr: 127.0.0.1:8848
-        namespace: ''
-        group: DEFAULT_GROUP
-        file-extension: yml
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
       routes:
         - id: cloud-auth
           uri: lb://cloud-auth
@@ -45,16 +31,3 @@ spring:
             - Path=/file/**
           filters:
             - StripPrefix=1
-
-  data:
-    redis:
-      host: 127.0.0.1
-      port: 6379
-      password: redis123
-      database: 0
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'

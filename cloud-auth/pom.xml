@@ -1,80 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.project</groupId>
+        <groupId>com.project.cloud</groupId>
         <artifactId>project-cloud</artifactId>
         <version>1.0.0</version>
     </parent>
 
     <artifactId>cloud-auth</artifactId>
-
     <name>cloud-auth</name>
     <description>认证服务</description>
 
     <dependencies>
-        <!-- 核心模块 -->
+        <!-- Common Security -->
         <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-core</artifactId>
-        </dependency>
-
-        <!-- Redis 模块 -->
-        <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-redis</artifactId>
-        </dependency>
-
-        <!-- 安全模块 -->
-        <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-security</artifactId>
         </dependency>
 
-        <!-- 日志模块 -->
+        <!-- Common Redis -->
         <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-log</artifactId>
+            <groupId>com.project.cloud</groupId>
+            <artifactId>cloud-common-redis</artifactId>
         </dependency>
 
-        <!-- API 模块 -->
+        <!-- Common Swagger -->
         <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
+            <artifactId>cloud-common-swagger</artifactId>
+        </dependency>
+
+        <!-- API System (for user query) -->
+        <dependency>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-api-system</artifactId>
         </dependency>
 
-        <!-- Nacos 服务发现 -->
+        <!-- Nacos Discovery -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
-        <!-- Nacos 配置中心 -->
+        <!-- Nacos Config -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!-- Spring Cloud Bootstrap -->
+        <!-- Bootstrap -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
-        <!-- Spring Boot Actuator -->
+        <!-- LoadBalancer -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
     </dependencies>
 

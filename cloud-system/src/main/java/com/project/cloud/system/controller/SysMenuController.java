@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * 菜单管理控制器
- */
 @Tag(name = "菜单管理")
 @RestController
 @RequestMapping("/menu")
@@ -29,36 +26,36 @@ public class SysMenuController {
 
     private final ISysMenuService menuService;
 
-    @PostMapping("/detail")
-    @Operation(summary = "查询菜单详情")
-    public Result<SysMenuVO> detail(@RequestBody SysMenuQuery query) {
-        return Result.success(menuService.detail(query));
-    }
-
     @PostMapping("/list")
-    @Operation(summary = "查询菜单列表")
+    @Operation(summary = "菜单列表")
     public Result<List<SysMenuVO>> list(@RequestBody SysMenuQuery query) {
         return Result.success(menuService.list(query));
     }
 
     @PostMapping("/tree")
-    @Operation(summary = "查询菜单树")
+    @Operation(summary = "菜单树")
     public Result<List<SysMenuVO>> tree() {
         return Result.success(menuService.tree());
+    }
+
+    @PostMapping("/detail")
+    @Operation(summary = "菜单详情")
+    public Result<SysMenuVO> detail(@RequestBody SysMenuQuery query) {
+        return Result.success(menuService.detail(query.getId()));
     }
 
     @PostMapping("/add")
     @Operation(summary = "新增菜单")
     @OperLog(title = "菜单管理", businessType = BusinessType.INSERT)
-    public Result<Void> add(@RequestBody @Valid SysMenuDTO dto) {
+    public Result<Void> add(@Valid @RequestBody SysMenuDTO dto) {
         menuService.add(dto);
         return Result.success();
     }
 
     @PostMapping("/update")
-    @Operation(summary = "更新菜单")
+    @Operation(summary = "修改菜单")
     @OperLog(title = "菜单管理", businessType = BusinessType.UPDATE)
-    public Result<Void> update(@RequestBody @Valid SysMenuDTO dto) {
+    public Result<Void> update(@Valid @RequestBody SysMenuDTO dto) {
         menuService.update(dto);
         return Result.success();
     }
@@ -67,7 +64,7 @@ public class SysMenuController {
     @Operation(summary = "删除菜单")
     @OperLog(title = "菜单管理", businessType = BusinessType.DELETE)
     public Result<Void> delete(@RequestBody Long id) {
-        menuService.delete(id);
+        menuService.deleteById(id);
         return Result.success();
     }
 }

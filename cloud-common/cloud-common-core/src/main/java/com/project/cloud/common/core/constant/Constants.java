@@ -1,164 +1,52 @@
 package com.project.cloud.common.core.constant;
 
-/**
- * 通用常量
- */
 public class Constants {
 
-    /**
-     * UTF-8 字符集
-     */
     public static final String UTF8 = "UTF-8";
 
-    /**
-     * GBK 字符集
-     */
-    public static final String GBK = "GBK";
-
-    /**
-     * 成功标记
-     */
-    public static final int SUCCESS = 200;
-
-    /**
-     * 失败标记
-     */
-    public static final int FAIL = 500;
-
-    /**
-     * 登录成功
-     */
-    public static final String LOGIN_SUCCESS = "Success";
-
-    /**
-     * 注销
-     */
-    public static final String LOGOUT = "Logout";
-
-    /**
-     * 注册
-     */
-    public static final String REGISTER = "Register";
-
-    /**
-     * 登录失败
-     */
-    public static final String LOGIN_FAIL = "Error";
-
-    /**
-     * 令牌
-     */
-    public static final String TOKEN = "token";
-
-    /**
-     * 令牌前缀
-     */
     public static final String TOKEN_PREFIX = "Bearer ";
 
-    /**
-     * 令牌前缀
-     */
-    public static final String LOGIN_USER_KEY = "login_user_key";
+    public static final String LOGIN_USER_ID = "user_id";
 
-    /**
-     * 用户ID
-     */
-    public static final String USER_ID = "user_id";
+    public static final String LOGIN_USERNAME = "username";
 
-    /**
-     * 用户名
-     */
-    public static final String USERNAME = "username";
+    public static final String LOGIN_AUTHORITIES = "authorities";
 
-    /**
-     * 授权信息
-     */
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final Integer SUCCESS_CODE = 200;
 
-    /**
-     * 请求来源
-     */
-    public static final String FROM_SOURCE = "from-source";
-
-    /**
-     * 内部请求
-     */
-    public static final String INNER = "inner";
-
-    /**
-     * 用户名称
-     */
-    public static final String SYS_USER = "sys_user";
-
-    /**
-     * 角色名称
-     */
-    public static final String SYS_ROLE = "sys_role";
-
-    /**
-     * 菜单名称
-     */
-    public static final String SYS_MENU = "sys_menu";
-
-    /**
-     * 字典名称
-     */
-    public static final String SYS_DICT = "sys_dict";
-
-    /**
-     * 参数名称
-     */
-    public static final String SYS_CONFIG = "sys_config";
-
-    /**
-     * 日志名称
-     */
-    public static final String SYS_LOG = "sys_log";
-
-    /**
-     * 代码生成名称
-     */
-    public static final String GEN_CONFIG = "gen_config";
-
-    /**
-     * 文件存储名称
-     */
-    public static final String FILE_STORAGE = "file_storage";
-
-    /**
-     * 成功消息
-     */
     public static final String SUCCESS_MSG = "操作成功";
 
-    /**
-     * 失败消息
-     */
-    public static final String FAIL_MSG = "操作失败";
+    public static final Integer ERROR_CODE = 500;
 
-    /**
-     * 登录用户
-     */
-    public static final String LOGIN_TOKEN = "login_tokens";
+    public static final String ERROR_MSG = "系统异常，请联系管理员";
 
-    /**
-     * 验证码有效期（分钟）
-     */
-    public static final int CAPTCHA_EXPIRATION = 5;
+    public static final Integer UNAUTHORIZED_CODE = 401;
 
-    /**
-     * 令牌有效期（分钟）
-     */
-    public static final int TOKEN_EXPIRATION = 120;
+    public static final String UNAUTHORIZED_MSG = "认证失败，请重新登录";
 
-    /**
-     * 登录失败重试次数
-     */
-    public static final int LOGIN_RETRY_COUNT = 5;
+    public static final Integer FORBIDDEN_CODE = 403;
 
-    /**
-     * 登录失败锁定时间（分钟）
-     */
-    public static final int LOGIN_LOCK_TIME = 10;
+    public static final String FORBIDDEN_MSG = "没有权限，请联系管理员";
+
+    public static final String TOKEN_KEY = "auth:token:";
+
+    public static final String PERMS_KEY = "auth:perms:";
+
+    public static final String DICT_KEY = "dict:";
+
+    public static final String CAPTCHA_KEY = "captcha:";
+
+    public static final String RATE_KEY = "rate:";
+
+    public static final String LOCK_KEY = "lock:";
+
+    public static final Integer STATUS_ENABLE = 0;
+
+    public static final Integer STATUS_DISABLE = 1;
+
+    public static final Integer NOT_DELETED = 0;
+
+    public static final Integer DELETED = 1;
 
     private Constants() {
     }

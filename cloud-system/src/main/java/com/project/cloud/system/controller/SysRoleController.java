@@ -1,5 +1,6 @@
 package com.project.cloud.system.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.project.cloud.common.core.enums.BusinessType;
 import com.project.cloud.common.core.result.PageResult;
 import com.project.cloud.common.core.result.Result;
@@ -19,9 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * 角色管理控制器
- */
 @Tag(name = "角色管理")
 @RestController
 @RequestMapping("/role")
@@ -30,36 +28,31 @@ public class SysRoleController {
 
     private final ISysRoleService roleService;
 
-    @PostMapping("/detail")
-    @Operation(summary = "查询角色详情")
-    public Result<SysRoleVO> detail(@RequestBody SysRoleQuery query) {
-        return Result.success(roleService.detail(query));
-    }
-
     @PostMapping("/list")
-    @Operation(summary = "查询角色列表")
+    @Operation(summary = "角色列表")
     public Result<PageResult<SysRoleVO>> list(@RequestBody SysRoleQuery query) {
-        return Result.success(roleService.list(query));
+        Page<SysRoleVO> page = roleService.page(query);
+        return Result.success(new PageResult<>(page.getTotal(), page.getRecords()));
     }
 
-    @PostMapping("/listAll")
-    @Operation(summary = "查询所有角色")
-    public Result<List<SysRoleVO>> listAll() {
-        return Result.success(roleService.listAll());
+    @PostMapping("/detail")
+    @Operation(summary = "角色详情")
+    public Result<SysRoleVO> detail(@RequestBody SysRoleQuery query) {
+        return Result.success(roleService.detail(query.getId()));
     }
 
     @PostMapping("/add")
     @Operation(summary = "新增角色")
     @OperLog(title = "角色管理", businessType = BusinessType.INSERT)
-    public Result<Void> add(@RequestBody @Valid SysRoleDTO dto) {
+    public Result<Void> add(@Valid @RequestBody SysRoleDTO dto) {
         roleService.add(dto);
         return Result.success();
     }
 
     @PostMapping("/update")
-    @Operation(summary = "更新角色")
+    @Operation(summary = "修改角色")
     @OperLog(title = "角色管理", businessType = BusinessType.UPDATE)
-    public Result<Void> update(@RequestBody @Valid SysRoleDTO dto) {
+    public Result<Void> update(@Valid @RequestBody SysRoleDTO dto) {
         roleService.update(dto);
         return Result.success();
     }
@@ -68,7 +61,7 @@ public class SysRoleController {
     @Operation(summary = "删除角色")
     @OperLog(title = "角色管理", businessType = BusinessType.DELETE)
     public Result<Void> delete(@RequestBody List<Long> ids) {
-        roleService.delete(ids);
+        roleService.deleteByIds(ids);
         return Result.success();
     }
 }

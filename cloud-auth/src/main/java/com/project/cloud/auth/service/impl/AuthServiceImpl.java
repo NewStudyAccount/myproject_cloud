@@ -3,105 +3,120 @@ package com.project.cloud.auth.service.impl;
 import com.project.cloud.auth.domain.LoginRequest;
 import com.project.cloud.auth.domain.LoginResponse;
 import com.project.cloud.auth.service.AuthService;
+import com.project.cloud.common.core.constant.Constants;
 import com.project.cloud.common.core.exception.BusinessException;
 import com.project.cloud.common.redis.service.RedisService;
-import com.project.cloud.common.security.utils.JwtUtils;
+import com.project.cloud.common.security.utils.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 认证服务实现
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final TokenUtils tokenUtils;
     private final RedisService redisService;
 
-    private static final String LOGIN_TOKEN_KEY = "login_tokens:";
-    private static final long TOKEN_EXPIRE_TIME = 7200; // 2小时
+    private static final long ACCESS_TOKEN_EXPIRE_SECONDS = 7200L;
+    private static final long REFRESH_TOKEN_EXPIRE_SECONDS = 604800L;
 
     @Override
     public LoginResponse login(LoginRequest request) {
         try {
-            // 认证
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
 
-            // 设置认证信息
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-            // 生成 Token
+            List<String> authorities = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
+
             Map<String, Object> claims = new HashMap<>();
-            claims.put("username", request.getUsername());
-            String token = jwtUtils.generateToken(request.getUsername(), claims);
+            claims.put(Constants.LOGIN_USER_ID, userDetails.getUserId());
+            claims.put(Constants.LOGIN_USERNAME, userDetails.getUsername());
+            claims.put(Constants.LOGIN_AUTHORITIES, authorities);
 
-            // 存储 Token 到 Redis
-            String redisKey = LOGIN_TOKEN_KEY + request.getUsername();
-            redisService.set(redisKey, token, TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
+            String accessToken = tokenUtils.createToken(claims);
 
-            log.info("用户 {} 登录成功", request.getUsername());
+            String refreshToken = UUID.randomUUID().toString().replace("-", "");
+
+            String tokenKey = Constants.TOKEN_KEY + userDetails.getUserId();
+            redisService.set(tokenKey, accessToken, ACCESS_TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
+
+            String refreshKey = Constants.TOKEN_KEY + "refresh:" + refreshToken;
+            Map<String, Object> refreshData = new HashMap<>();
+            refreshData.put(Constants.LOGIN_USER_ID, userDetails.getUserId());
+            refreshData.put(Constants.LOGIN_USERNAME, userDetails.getUsername());
+            redisService.set(refreshKey, claims, REFRESH_TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
 
             return LoginResponse.builder()
-                    .accessToken(token)
-                    .refreshToken(token)
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .expiresIn(ACCESS_TOKEN_EXPIRE_SECONDS)
                     .tokenType("Bearer")
-                    .expiresIn(TOKEN_EXPIRE_TIME)
                     .build();
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("登录失败: {}", e.getMessage());
-            throw new BusinessException("登录失败: " + e.getMessage());
+            throw new BusinessException("用户名或密码错误");
         }
     }
 
     @Override
     public void logout() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            String username = authentication.getName();
-            String redisKey = LOGIN_TOKEN_KEY + username;
-            redisService.delete(redisKey);
-            SecurityContextHolder.clearContext();
-            log.info("用户 {} 登出成功", username);
+        try {
+            Long userId = com.project.cloud.common.security.utils.SecurityUtils.getUserId();
+            redisService.delete(Constants.TOKEN_KEY + userId);
+        } catch (Exception e) {
+            log.warn("登出时清理Token失败", e);
         }
     }
 
     @Override
-    public LoginResponse refreshToken() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new BusinessException("用户未登录");
+    @SuppressWarnings("unchecked")
+    public LoginResponse refresh(String refreshToken) {
+        String refreshKey = Constants.TOKEN_KEY + "refresh:" + refreshToken;
+        Map<String, Object> claims = redisService.get(refreshKey);
+        if (claims == null) {
+            throw new BusinessException("刷新Token无效或已过期");
         }
 
-        String username = authentication.getName();
+        redisService.delete(refreshKey);
 
-        // 生成新 Token
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("username", username);
-        String token = jwtUtils.generateToken(username, claims);
+        String newAccessToken = tokenUtils.createToken(claims);
 
-        // 更新 Redis 中的 Token
-        String redisKey = LOGIN_TOKEN_KEY + username;
-        redisService.set(redisKey, token, TOKEN_EXPIRE_TIME, TimeUnit.SECONDS);
+        Long userId = claims.get(Constants.LOGIN_USER_ID) != null
+                ? Long.parseLong(claims.get(Constants.LOGIN_USER_ID).toString()) : null;
+        if (userId != null) {
+            String tokenKey = Constants.TOKEN_KEY + userId;
+            redisService.set(tokenKey, newAccessToken, ACCESS_TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
+        }
+
+        String newRefreshToken = UUID.randomUUID().toString().replace("-", "");
+        String newRefreshKey = Constants.TOKEN_KEY + "refresh:" + newRefreshToken;
+        redisService.set(newRefreshKey, claims, REFRESH_TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
 
         return LoginResponse.builder()
-                .accessToken(token)
-                .refreshToken(token)
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .expiresIn(ACCESS_TOKEN_EXPIRE_SECONDS)
                 .tokenType("Bearer")
-                .expiresIn(TOKEN_EXPIRE_TIME)
                 .build();
     }
 }

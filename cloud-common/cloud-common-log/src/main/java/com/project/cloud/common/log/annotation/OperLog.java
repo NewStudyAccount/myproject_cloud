@@ -2,33 +2,20 @@ package com.project.cloud.common.log.annotation;
 
 import com.project.cloud.common.core.enums.BusinessType;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * 操作日志注解
- */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Documented
 public @interface OperLog {
 
-    /**
-     * 模块名
-     */
     String title() default "";
 
-    /**
-     * 操作类型
-     */
     BusinessType businessType() default BusinessType.OTHER;
 
-    /**
-     * 是否保存请求参数
-     */
     boolean isSaveRequestData() default true;
 
-    /**
-     * 是否保存响应数据
-     */
     boolean isSaveResponseData() default true;
 }

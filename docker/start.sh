@@ -2,28 +2,21 @@
 
 echo "Starting Project Cloud services..."
 
-# 启动基础服务
-echo "Starting MySQL, Redis, Nacos, MinIO..."
+# 启动基础设施
 docker-compose up -d mysql redis nacos minio
 
-# 等待 MySQL 启动
-echo "Waiting for MySQL to start..."
+echo "Waiting for services to be ready..."
 sleep 30
 
-# 等待 Nacos 启动
-echo "Waiting for Nacos to start..."
-sleep 20
+# 启动后端服务
+echo "Starting backend services..."
+cd ..
+mvn clean package -DskipTests
 
-echo "All base services started!"
-echo ""
-echo "Service URLs:"
-echo "  MySQL:     127.0.0.1:3306"
-echo "  Redis:     127.0.0.1:6379"
-echo "  Nacos:     http://127.0.0.1:8848/nacos"
-echo "  MinIO:     http://127.0.0.1:9001"
-echo ""
-echo "Default credentials:"
-echo "  MySQL:     root / root123"
-echo "  Redis:     password: redis123"
-echo "  Nacos:     nacos / nacos"
-echo "  MinIO:     minioadmin / minioadmin"
+nohup java -jar cloud-gateway/target/cloud-gateway-1.0.0.jar > logs/gateway.log 2>&1 &
+nohup java -jar cloud-auth/target/cloud-auth-1.0.0.jar > logs/auth.log 2>&1 &
+nohup java -jar cloud-system/target/cloud-system-1.0.0.jar > logs/system.log 2>&1 &
+nohup java -jar cloud-generator/target/cloud-generator-1.0.0.jar > logs/generator.log 2>&1 &
+nohup java -jar cloud-file/target/cloud-file-1.0.0.jar > logs/file.log 2>&1 &
+
+echo "All services started!"

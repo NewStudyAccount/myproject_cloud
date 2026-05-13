@@ -1,30 +1,15 @@
 package com.project.cloud.common.core.result;
 
+import com.project.cloud.common.core.constant.Constants;
 import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * 统一响应结果
- */
 @Data
 public class Result<T> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 状态码
-     */
     private int code;
-
-    /**
-     * 消息
-     */
     private String msg;
-
-    /**
-     * 数据
-     */
     private T data;
 
     public static <T> Result<T> success() {
@@ -33,26 +18,21 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> success(T data) {
         Result<T> result = new Result<>();
-        result.setCode(200);
-        result.setMsg("操作成功");
-        result.setData(data);
-        return result;
-    }
-
-    public static <T> Result<T> success(String msg, T data) {
-        Result<T> result = new Result<>();
-        result.setCode(200);
-        result.setMsg(msg);
+        result.setCode(Constants.SUCCESS_CODE);
+        result.setMsg(Constants.SUCCESS_MSG);
         result.setData(data);
         return result;
     }
 
     public static <T> Result<T> error() {
-        return error("操作失败");
+        return error(Constants.ERROR_MSG);
     }
 
     public static <T> Result<T> error(String msg) {
-        return error(500, msg);
+        Result<T> result = new Result<>();
+        result.setCode(Constants.ERROR_CODE);
+        result.setMsg(msg);
+        return result;
     }
 
     public static <T> Result<T> error(int code, String msg) {
@@ -62,7 +42,23 @@ public class Result<T> implements Serializable {
         return result;
     }
 
+    public static <T> Result<T> unauthorized() {
+        return error(Constants.UNAUTHORIZED_CODE, Constants.UNAUTHORIZED_MSG);
+    }
+
+    public static <T> Result<T> unauthorized(String msg) {
+        return error(Constants.UNAUTHORIZED_CODE, msg);
+    }
+
+    public static <T> Result<T> forbidden() {
+        return error(Constants.FORBIDDEN_CODE, Constants.FORBIDDEN_MSG);
+    }
+
+    public static <T> Result<T> forbidden(String msg) {
+        return error(Constants.FORBIDDEN_CODE, msg);
+    }
+
     public boolean isSuccess() {
-        return this.code == 200;
+        return this.code == Constants.SUCCESS_CODE;
     }
 }

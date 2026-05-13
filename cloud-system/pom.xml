@@ -1,98 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.project</groupId>
+        <groupId>com.project.cloud</groupId>
         <artifactId>project-cloud</artifactId>
         <version>1.0.0</version>
     </parent>
 
     <artifactId>cloud-system</artifactId>
-
     <name>cloud-system</name>
     <description>系统管理服务</description>
 
     <dependencies>
-        <!-- 核心模块 -->
+        <!-- Common MyBatis -->
         <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-core</artifactId>
-        </dependency>
-
-        <!-- MyBatis 模块 -->
-        <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-mybatis</artifactId>
         </dependency>
 
-        <!-- Redis 模块 -->
+        <!-- Common Security -->
         <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-redis</artifactId>
-        </dependency>
-
-        <!-- 安全模块 -->
-        <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-security</artifactId>
         </dependency>
 
-        <!-- 日志模块 -->
+        <!-- Common Log -->
         <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-log</artifactId>
         </dependency>
 
-        <!-- Swagger 模块 -->
+        <!-- Common Swagger -->
         <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-swagger</artifactId>
         </dependency>
 
-        <!-- API 模块 -->
+        <!-- API System -->
         <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-api-system</artifactId>
-        </dependency>
-
-        <!-- Nacos 服务发现 -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-
-        <!-- Nacos 配置中心 -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-
-        <!-- Spring Cloud Bootstrap -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-
-        <!-- Sentinel -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-        </dependency>
-
-        <!-- Spring Boot Actuator -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <!-- MapStruct -->
@@ -101,10 +51,35 @@
             <artifactId>mapstruct</artifactId>
         </dependency>
 
-        <!-- EasyExcel -->
+        <!-- Nacos Discovery -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- Nacos Config -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- Bootstrap -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+
+        <!-- LoadBalancer -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- Excel (EasyExcel for import/export) -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
+            <version>3.3.4</version>
         </dependency>
     </dependencies>
 
@@ -113,24 +88,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
         </plugins>
     </build>

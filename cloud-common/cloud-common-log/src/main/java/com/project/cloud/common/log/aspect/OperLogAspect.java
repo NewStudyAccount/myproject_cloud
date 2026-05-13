@@ -1,98 +1,114 @@
 package com.project.cloud.common.log.aspect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.cloud.common.core.enums.BusinessType;
-import com.project.cloud.common.core.utils.SecurityUtils;
+import com.project.cloud.common.core.utils.JsonUtils;
 import com.project.cloud.common.log.annotation.OperLog;
+import com.project.cloud.common.log.event.OperLogEvent;
+import com.project.cloud.common.security.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * 操作日志切面
- */
 @Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
 public class OperLogAspect {
 
-    private final ObjectMapper objectMapper;
+    private final ApplicationEventPublisher publisher;
 
     @Around("@annotation(operLog)")
     public Object around(ProceedingJoinPoint point, OperLog operLog) throws Throwable {
         long startTime = System.currentTimeMillis();
 
-        // 执行方法
-        Object result = point.proceed();
+        OperLogEvent event = new OperLogEvent();
+        event.setTitle(operLog.title());
+        event.setBusinessType(operLog.businessType().ordinal());
+        event.setMethod(point.getTarget().getClass().getName() + "." + point.getSignature().getName());
+        event.setOperTime(LocalDateTime.now());
 
-        // 计算执行时间
-        long executionTime = System.currentTimeMillis() - startTime;
+        fillOperatorInfo(event);
 
+        if (operLog.isSaveRequestData()) {
+            try {
+                Object[] args = point.getArgs();
+                Map<String, Object> params = new HashMap<>();
+                for (int i = 0; i < args.length; i++) {
+                    if (!(args[i] instanceof MultipartFile)) {
+                        params.put("arg" + i, args[i]);
+                    }
+                }
+                event.setRequestParam(JsonUtils.toJson(params));
+            } catch (Exception e) {
+                log.warn("记录请求参数失败", e);
+            }
+        }
+
+        Object result;
         try {
-            // 记录操作日志
-            recordLog(point, operLog, result, executionTime);
+            result = point.proceed();
+            event.setStatus(0);
+            event.setErrorMsg(null);
         } catch (Exception e) {
-            log.error("记录操作日志失败", e);
+            event.setStatus(1);
+            event.setErrorMsg(e.getMessage());
+            throw e;
+        } finally {
+            long costTime = System.currentTimeMillis() - startTime;
+            event.setCostTime(costTime);
+
+            if (operLog.isSaveResponseData() && event.getStatus() == 0) {
+                try {
+                    event.setJsonResult(JsonUtils.toJson(result));
+                } catch (Exception e) {
+                    log.warn("记录响应数据失败", e);
+                }
+            }
+
+            publisher.publishEvent(event);
         }
 
         return result;
     }
 
-    private void recordLog(ProceedingJoinPoint point, OperLog operLog, Object result, long executionTime) {
-        // 获取请求信息
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) {
-            return;
-        }
-
-        HttpServletRequest request = attributes.getRequest();
-
-        // 构建日志信息
-        StringBuilder logInfo = new StringBuilder();
-        logInfo.append("操作模块: ").append(operLog.title()).append(" | ");
-        logInfo.append("操作类型: ").append(operLog.businessType().getInfo()).append(" | ");
-        logInfo.append("请求方法: ").append(point.getTarget().getClass().getName()).append(".").append(point.getSignature().getName()).append(" | ");
-        logInfo.append("请求方式: ").append(request.getMethod()).append(" | ");
-        logInfo.append("请求URL: ").append(request.getRequestURI()).append(" | ");
-        logInfo.append("执行时间: ").append(executionTime).append("ms");
-
-        // 获取操作人
+    private void fillOperatorInfo(OperLogEvent event) {
         try {
-            String username = SecurityUtils.getUsername();
-            logInfo.append(" | 操作人: ").append(username);
+            event.setOperName(SecurityUtils.getUsername());
         } catch (Exception e) {
-            log.debug("获取操作人失败");
+            log.debug("获取操作者用户名失败", e);
+            event.setOperName("unknown");
         }
 
-        // 保存请求参数
-        if (operLog.isSaveRequestData()) {
-            try {
-                String params = objectMapper.writeValueAsString(point.getArgs());
-                logInfo.append(" | 请求参数: ").append(params);
-            } catch (Exception e) {
-                log.debug("序列化请求参数失败");
+        try {
+            ServletRequestAttributes attributes =
+                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes != null) {
+                HttpServletRequest request = attributes.getRequest();
+                String ip = request.getHeader("X-Forwarded-For");
+                if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+                    ip = request.getHeader("X-Real-IP");
+                }
+                if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+                    ip = request.getRemoteAddr();
+                }
+                if (ip != null && ip.contains(",")) {
+                    ip = ip.split(",")[0].trim();
+                }
+                event.setOperIp(ip);
             }
+        } catch (Exception e) {
+            log.debug("获取操作者IP失败", e);
         }
-
-        // 保存响应数据
-        if (operLog.isSaveResponseData() && result != null) {
-            try {
-                String response = objectMapper.writeValueAsString(result);
-                logInfo.append(" | 响应数据: ").append(response);
-            } catch (Exception e) {
-                log.debug("序列化响应数据失败");
-            }
-        }
-
-        log.info("操作日志: {}", logInfo);
     }
 }

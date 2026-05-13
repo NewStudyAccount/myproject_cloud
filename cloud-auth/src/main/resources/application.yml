@@ -4,31 +4,7 @@ server:
 spring:
   application:
     name: cloud-auth
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        namespace: ''
-        group: DEFAULT_GROUP
-      config:
-        server-addr: 127.0.0.1:8848
-        namespace: ''
-        group: DEFAULT_GROUP
-        file-extension: yml
 
-  data:
-    redis:
-      host: 127.0.0.1
-      port: 6379
-      password: redis123
-      database: 0
-
-jwt:
-  secret: U2VjdXJlU2VjcmV0S2V5Rm9ySldUU2lnbmluZ1B1cnBvc2VzMTIzNDU2Nzg5MA==
-  expiration: 7200
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+token:
+  secret: abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ
+  expireTime: 7200

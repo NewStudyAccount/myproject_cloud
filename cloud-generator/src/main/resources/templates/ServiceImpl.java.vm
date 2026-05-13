@@ -1,0 +1,63 @@
+package ${packageName}.${moduleName}.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.project.cloud.common.core.exception.BusinessException;
+import com.project.cloud.common.mybatis.base.BaseService;
+import ${packageName}.${moduleName}.convert.${entityName}Convert;
+import ${packageName}.${moduleName}.domain.dto.${entityName}DTO;
+import ${packageName}.${moduleName}.domain.entity.${entityName};
+import ${packageName}.${moduleName}.domain.query.${entityName}Query;
+import ${packageName}.${moduleName}.domain.vo.${entityName}VO;
+import ${packageName}.${moduleName}.mapper.${entityName}Mapper;
+import ${packageName}.${moduleName}.service.I${entityName}Service;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * ${tableComment} Service 实现
+ *
+ * @author ${author}
+ */
+@Slf4j
+@Service
+public class ${entityName}ServiceImpl extends BaseService<${entityName}Mapper, ${entityName}> implements I${entityName}Service {
+
+    @Override
+    public Page<${entityName}VO> page(${entityName}Query query) {
+        Page<${entityName}> page = new Page<>(query.getPageNum(), query.getPageSize());
+        LambdaQueryWrapper<${entityName}> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(${entityName}::getCreateTime);
+
+        Page<${entityName}> result = baseMapper.selectPage(page, wrapper);
+        return ${entityName}Convert.INSTANCE.toPageVO(result);
+    }
+
+    @Override
+    public ${entityName}VO detail(Long id) {
+        ${entityName} entity = getById(id);
+        if (entity == null) {
+            throw new BusinessException("记录不存在");
+        }
+        return ${entityName}Convert.INSTANCE.toVO(entity);
+    }
+
+    @Override
+    public void add(${entityName}DTO dto) {
+        ${entityName} entity = ${entityName}Convert.INSTANCE.toEntity(dto);
+        save(entity);
+    }
+
+    @Override
+    public void update(${entityName}DTO dto) {
+        ${entityName} entity = ${entityName}Convert.INSTANCE.toEntity(dto);
+        updateById(entity);
+    }
+
+    @Override
+    public void deleteByIds(List<Long> ids) {
+        removeByIds(ids);
+    }
+}

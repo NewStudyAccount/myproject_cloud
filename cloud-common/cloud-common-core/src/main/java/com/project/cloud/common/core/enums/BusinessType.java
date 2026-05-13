@@ -1,50 +1,23 @@
 package com.project.cloud.common.core.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-/**
- * 业务操作类型
- */
-@Getter
-@AllArgsConstructor
 public enum BusinessType {
 
-    /**
-     * 其它
-     */
-    OTHER(0, "其它"),
+    OTHER("其他"),
+    INSERT("新增"),
+    UPDATE("修改"),
+    DELETE("删除"),
+    EXPORT("导出"),
+    IMPORT("导入"),
+    GRANT("授权"),
+    FORCE_LOGOUT("强退");
 
-    /**
-     * 新增
-     */
-    INSERT(1, "新增"),
+    private final String description;
 
-    /**
-     * 修改
-     */
-    UPDATE(2, "修改"),
+    BusinessType(String description) {
+        this.description = description;
+    }
 
-    /**
-     * 删除
-     */
-    DELETE(3, "删除"),
-
-    /**
-     * 导出
-     */
-    EXPORT(4, "导出"),
-
-    /**
-     * 导入
-     */
-    IMPORT(5, "导入"),
-
-    /**
-     * 清空
-     */
-    CLEAN(6, "清空");
-
-    private final int code;
-    private final String info;
+    public String getDescription() {
+        return description;
+    }
 }

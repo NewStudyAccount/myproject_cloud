@@ -1,99 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.project</groupId>
+        <groupId>com.project.cloud</groupId>
         <artifactId>project-cloud</artifactId>
         <version>1.0.0</version>
     </parent>
 
     <artifactId>cloud-generator</artifactId>
-
     <name>cloud-generator</name>
     <description>代码生成服务</description>
 
     <dependencies>
-        <!-- 核心模块 -->
+        <!-- Common MyBatis -->
         <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-core</artifactId>
-        </dependency>
-
-        <!-- MyBatis 模块 -->
-        <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-mybatis</artifactId>
         </dependency>
 
-        <!-- 安全模块 -->
+        <!-- Common Swagger -->
         <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-security</artifactId>
-        </dependency>
-
-        <!-- 日志模块 -->
-        <dependency>
-            <groupId>com.project</groupId>
-            <artifactId>cloud-common-log</artifactId>
-        </dependency>
-
-        <!-- Swagger 模块 -->
-        <dependency>
-            <groupId>com.project</groupId>
+            <groupId>com.project.cloud</groupId>
             <artifactId>cloud-common-swagger</artifactId>
         </dependency>
 
-        <!-- Nacos 服务发现 -->
+        <!-- API Generator -->
+        <dependency>
+            <groupId>com.project.cloud</groupId>
+            <artifactId>cloud-api-generator</artifactId>
+        </dependency>
+
+        <!-- Velocity -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+        </dependency>
+
+        <!-- Nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-
-        <!-- Nacos 配置中心 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!-- Spring Cloud Bootstrap -->
+        <!-- Bootstrap -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
-        <!-- Sentinel -->
+        <!-- LoadBalancer -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-        </dependency>
-
-        <!-- Spring Boot Actuator -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <!-- Velocity 模板引擎 -->
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-engine-core</artifactId>
-            <version>2.3</version>
-        </dependency>
-
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- MapStruct -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
     </dependencies>
 
@@ -102,24 +67,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
         </plugins>
     </build>

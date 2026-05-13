@@ -4,56 +4,27 @@ server:
 spring:
   application:
     name: cloud-system
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        namespace: ''
-        group: DEFAULT_GROUP
-      config:
-        server-addr: 127.0.0.1:8848
-        namespace: ''
-        group: DEFAULT_GROUP
-        file-extension: yml
-
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/project_cloud?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
-    username: root
-    password: root123
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:project_cloud}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USER:root}
+    password: ${DB_PASS:root123}
     druid:
       initial-size: 5
-      min-idle: 10
+      min-idle: 5
       max-active: 20
-      max-wait: 60000
-
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
-      password: redis123
-      database: 0
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASS:redis123}
 
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.project.cloud.system.domain.entity
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  global-config:
-    db-config:
-      id-type: ASSIGN_ID
-      logic-delete-field: deleted
-      logic-delete-value: 1
-      logic-not-delete-value: 0
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 
-jwt:
-  secret: U2VjdXJlU2VjcmV0S2V5Rm9ySldUU2lnbmluZ1B1cnBvc2VzMTIzNDU2Nzg5MA==
-  expiration: 7200
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+token:
+  secret: abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ

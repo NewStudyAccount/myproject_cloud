@@ -3,46 +3,52 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0.33
-    container_name: project-cloud-mysql
+    container_name: cloud-mysql
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root123
       MYSQL_DATABASE: project_cloud
-      MYSQL_CHARSET: utf8mb4
-      MYSQL_COLLATION: utf8mb4_unicode_ci
+      TZ: Asia/Shanghai
     volumes:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
-    command: --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - cloud-net
 
   redis:
     image: redis:7.2
-    container_name: project-cloud-redis
+    container_name: cloud-redis
     ports:
       - "6379:6379"
-    command: redis-server --requirepass redis123 --appendonly yes
+    command: redis-server --requirepass redis123
     volumes:
       - ./redis/data:/data
-    restart: always
+    networks:
+      - cloud-net
 
   nacos:
     image: nacos/nacos-server:v2.4.3
-    container_name: project-cloud-nacos
+    container_name: cloud-nacos
     ports:
       - "8848:8848"
       - "9848:9848"
     environment:
       MODE: standalone
-      SPRING_DATASOURCE_PLATFORM: ""
-      JVM_XMS: 256m
-      JVM_XMX: 256m
-    restart: always
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_DB_NAME: nacos
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root123
+    depends_on:
+      - mysql
+    networks:
+      - cloud-net
 
   minio:
     image: minio/minio:latest
-    container_name: project-cloud-minio
+    container_name: cloud-minio
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -52,4 +58,9 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - ./minio/data:/data
-    restart: always
+    networks:
+      - cloud-net
+
+networks:
+  cloud-net:
+    driver: bridge

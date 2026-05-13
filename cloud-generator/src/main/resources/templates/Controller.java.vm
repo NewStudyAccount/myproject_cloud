@@ -1,0 +1,72 @@
+package ${packageName}.${moduleName}.controller;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.project.cloud.common.core.enums.BusinessType;
+import com.project.cloud.common.core.result.PageResult;
+import com.project.cloud.common.core.result.Result;
+import com.project.cloud.common.log.annotation.OperLog;
+import ${packageName}.${moduleName}.domain.dto.${entityName}DTO;
+import ${packageName}.${moduleName}.domain.query.${entityName}Query;
+import ${packageName}.${moduleName}.domain.vo.${entityName}VO;
+import ${packageName}.${moduleName}.service.I${entityName}Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * ${tableComment} Controller
+ *
+ * @author ${author}
+ */
+@Tag(name = "${tableComment}")
+@RestController
+@RequestMapping("/${moduleName}/${entityNameUncap}")
+@RequiredArgsConstructor
+public class ${entityName}Controller {
+
+    private final I${entityName}Service ${entityNameUncap}Service;
+
+    @PostMapping("/list")
+    @Operation(summary = "列表")
+    public Result<PageResult<${entityName}VO>> list(@RequestBody ${entityName}Query query) {
+        Page<${entityName}VO> page = ${entityNameUncap}Service.page(query);
+        return Result.success(new PageResult<>(page.getTotal(), page.getRecords()));
+    }
+
+    @PostMapping("/detail")
+    @Operation(summary = "详情")
+    public Result<${entityName}VO> detail(@RequestBody ${entityName}Query query) {
+        return Result.success(${entityNameUncap}Service.detail(query.getId()));
+    }
+
+    @PostMapping("/add")
+    @Operation(summary = "新增")
+    @OperLog(title = "${tableComment}", businessType = BusinessType.INSERT)
+    public Result<Void> add(@Valid @RequestBody ${entityName}DTO dto) {
+        ${entityNameUncap}Service.add(dto);
+        return Result.success();
+    }
+
+    @PostMapping("/update")
+    @Operation(summary = "修改")
+    @OperLog(title = "${tableComment}", businessType = BusinessType.UPDATE)
+    public Result<Void> update(@Valid @RequestBody ${entityName}DTO dto) {
+        ${entityNameUncap}Service.update(dto);
+        return Result.success();
+    }
+
+    @PostMapping("/delete")
+    @Operation(summary = "删除")
+    @OperLog(title = "${tableComment}", businessType = BusinessType.DELETE)
+    public Result<Void> delete(@RequestBody List<Long> ids) {
+        ${entityNameUncap}Service.deleteByIds(ids);
+        return Result.success();
+    }
+}

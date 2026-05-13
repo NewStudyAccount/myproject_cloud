@@ -1,15 +1,16 @@
 import axios from 'axios'
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { ElMessage } from 'element-plus'
+import router from '@/router'
 
 const service: AxiosInstance = axios.create({
   baseURL: '/api',
-  timeout: 30000
+  timeout: 30000,
 })
 
 // 请求拦截器
 service.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('token')
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
@@ -17,7 +18,6 @@ service.interceptors.request.use(
     return config
   },
   (error) => {
-    console.error('请求错误:', error)
     return Promise.reject(error)
   }
 )
@@ -30,14 +30,13 @@ service.interceptors.response.use(
       ElMessage.error(res.msg || '请求失败')
       if (res.code === 401) {
         localStorage.removeItem('token')
-        window.location.href = '/login'
+        router.push('/login')
       }
       return Promise.reject(new Error(res.msg || '请求失败'))
     }
     return res
   },
   (error) => {
-    console.error('响应错误:', error)
     ElMessage.error(error.message || '网络异常')
     return Promise.reject(error)
   }

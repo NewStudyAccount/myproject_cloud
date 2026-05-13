@@ -112,7 +112,7 @@ POST /user/import        # 导入
 
 ## 默认账号
 
-- 管理员: admin / admin123
+- 管理员: admin / 123456
 
 ## 开发规范
 

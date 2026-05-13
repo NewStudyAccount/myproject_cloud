@@ -1,0 +1,41 @@
+import request from '@/utils/request'
+
+export function list(data: any) {
+  return request({
+    url: '/${moduleName}/${entityNameUncap}/list',
+    method: 'post',
+    data
+  })
+}
+
+export function detail(data: any) {
+  return request({
+    url: '/${moduleName}/${entityNameUncap}/detail',
+    method: 'post',
+    data
+  })
+}
+
+export function add(data: any) {
+  return request({
+    url: '/${moduleName}/${entityNameUncap}/add',
+    method: 'post',
+    data
+  })
+}
+
+export function update(data: any) {
+  return request({
+    url: '/${moduleName}/${entityNameUncap}/update',
+    method: 'post',
+    data
+  })
+}
+
+export function del(ids: number[]) {
+  return request({
+    url: '/${moduleName}/${entityNameUncap}/delete',
+    method: 'post',
+    data: ids
+  })
+}
